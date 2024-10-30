@@ -149,3 +149,67 @@ resource "aws_route_table_association" "a_region_2b" {
   subnet_id      = aws_subnet.subnet_region_2b.id
   route_table_id = aws_route_table.route_region_2.id
 }
+
+data "aws_ami" "latest_amazon_linux" {
+  provider    = aws.region_1
+  most_recent = true
+
+  owners = ["137112412989"]
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
+resource "aws_security_group" "web_server_sg" {
+  provider    = aws.region_1
+  vpc_id      = aws_vpc.vpc_region_1.id
+  name        = "web_server_sg"
+  description = "Allow HTTP and SSH traffic"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["99.234.137.42/32"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_launch_template" "web_server_lt" {
+  name          = "web_server_launch_template"
+  image_id      = data.aws_ami.latest_amazon_linux.id
+  instance_type = "t2.micro"
+  key_name      = "main-key"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tag_specifications {
+    resource_type = "instance"
+
+    tags = {
+      Name = "web_server_instance"
+    }
+  }
+
+  network_interfaces {
+    associate_public_ip_address = true
+    security_groups             = [aws_security_group.web_server_sg.id]
+  }
+}

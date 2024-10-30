@@ -213,3 +213,82 @@ resource "aws_launch_template" "web_server_lt" {
     security_groups             = [aws_security_group.web_server_sg.id]
   }
 }
+
+resource "aws_lb" "web_server_lb" {
+  provider           = aws.region_1
+  name               = "web-server-lb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.web_server_sg.id]
+
+  subnets = [
+    aws_subnet.subnet_region_1a.id,
+    aws_subnet.subnet_region_1b.id
+  ]
+
+  enable_deletion_protection = false
+
+  tags = {
+    Name = "web_server_lb"
+  }
+}
+
+resource "aws_lb_target_group" "web_server_tg" {
+  provider = aws.region_1
+  name     = "web-server-tg"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.vpc_region_1.id
+
+  health_check {
+    path                = "/"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+
+  tags = {
+    Name = "web_server_tg"
+  }
+}
+
+resource "aws_lb_listener" "web_server_listener" {
+  provider          = aws.region_1
+  load_balancer_arn = aws_lb.web_server_lb.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web_server_tg.arn
+  }
+}
+
+resource "aws_autoscaling_group" "web_server_asg" {
+  provider = aws.region_1
+  launch_template {
+    id      = aws_launch_template.web_server_lt.id
+    version = "$Latest"
+  }
+  
+  min_size         = 2
+  max_size         = 5
+  desired_capacity = 2
+  
+  vpc_zone_identifier = [
+    aws_subnet.subnet_region_1a.id,
+    aws_subnet.subnet_region_1b.id
+  ]
+
+  target_group_arns = [aws_lb_target_group.web_server_tg.arn]
+
+  tag {
+    key                 = "Name"
+    value               = "ASG_1"
+    propagate_at_launch = true
+  }
+
+  health_check_type         = "EC2"
+  health_check_grace_period = 300
+}

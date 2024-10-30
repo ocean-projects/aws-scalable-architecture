@@ -22,6 +22,8 @@ provider "aws" {
   region = var.region_2
 }
 
+# VPC's in multiple regions
+
 resource "aws_vpc" "vpc_region_1" {
   provider   = aws.region_1
   cidr_block = "10.0.0.0/16"
@@ -150,6 +152,9 @@ resource "aws_route_table_association" "a_region_2b" {
   route_table_id = aws_route_table.route_region_2.id
 }
 
+
+# EC2's and ASG in region 1
+
 data "aws_ami" "latest_amazon_linux" {
   provider    = aws.region_1
   most_recent = true
@@ -213,6 +218,8 @@ resource "aws_launch_template" "web_server_lt" {
     security_groups             = [aws_security_group.web_server_sg.id]
   }
 }
+
+# ELB in region 1
 
 resource "aws_lb" "web_server_lb" {
   provider           = aws.region_1
@@ -292,3 +299,116 @@ resource "aws_autoscaling_group" "web_server_asg" {
   health_check_type         = "EC2"
   health_check_grace_period = 300
 }
+
+
+#MySQL DB in region 2 with read-replicas in region 1
+
+resource "aws_db_subnet_group" "mysql_instance_subnet_2" {
+  provider   = aws.region_2
+  name       = "mysql-2-subnet-group"
+  subnet_ids = [
+    aws_subnet.subnet_region_2a.id,
+    aws_subnet.subnet_region_2b.id
+  ]
+
+  depends_on = [aws_vpc.vpc_region_2]
+
+  tags = {
+    Name = "MySQL DB Subnet Group"
+  }
+}
+
+resource "aws_db_instance" "mysql_instance_2" {
+  provider                = aws.region_2
+  identifier              = "mysql-instance"
+  engine                  = "mysql"
+  engine_version          = "5.7.44"
+  instance_class          = "db.t3.micro"
+  allocated_storage        = 20
+  username                = "admin"
+  password                = "pw123pw123"
+  db_subnet_group_name    = aws_db_subnet_group.mysql_instance_subnet_2.name
+  vpc_security_group_ids   = [aws_security_group.rds_sg_2.id]
+  backup_retention_period  = 7
+  skip_final_snapshot      = true
+
+  depends_on = [
+    aws_db_subnet_group.mysql_instance_subnet_2,
+    aws_security_group.rds_sg_2
+  ]
+
+  tags = {
+    Name = "MySQL DB Instance"
+  }
+}
+
+resource "aws_security_group" "rds_sg_2" {
+  provider = aws.region_2
+  vpc_id   = aws_vpc.vpc_region_2.id
+
+  depends_on = [aws_vpc.vpc_region_2]
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = [aws_subnet.subnet_region_2a.cidr_block]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_db_instance" "mysql_instance_2_read_replica" {
+  provider                = aws.region_1
+  identifier              = "mysql-read-replica-1"
+  engine                  = "mysql"
+  instance_class          = "db.t3.micro"
+  replicate_source_db     = aws_db_instance.mysql_instance_2.arn
+  db_subnet_group_name    = aws_db_subnet_group.mysql_replica_subnet_1.name
+  vpc_security_group_ids   = [aws_security_group.rds_sg_1.id]
+
+  depends_on = [aws_db_subnet_group.mysql_replica_subnet_1, aws_security_group.rds_sg_1]
+
+  tags = {
+    Name = "MySQL Read Replica"
+  }
+}
+
+resource "aws_db_subnet_group" "mysql_replica_subnet_1" {
+  provider   = aws.region_1
+  name       = "mysql-1-subnet-group"
+  subnet_ids = [
+    aws_subnet.subnet_region_1a.id,
+    aws_subnet.subnet_region_1b.id
+  ]
+
+  tags = {
+    Name = "MySQL DB Replica Group Region 2"
+  }
+}
+
+resource "aws_security_group" "rds_sg_1" {
+  provider = aws.region_1
+  vpc_id   = aws_vpc.vpc_region_1.id
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+

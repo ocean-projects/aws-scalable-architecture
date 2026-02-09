@@ -3,6 +3,11 @@
 
 ## Architecture Diagram
 
+
+```md
+## AWS Architecture Diagram
+
+```mermaid
 flowchart TB
     %% Clients
     U[Users<br/>(Web / Mobile)] -->|HTTPS| ALB[Application Load Balancer<br/>(Public Subnets)]

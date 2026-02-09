@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+images/.DS_Store
+
+# Terraform state
+*.tfstate
+*.tfstate.backup
+*.tfstate.*.backup
+
+# Terraform working dir
+.terraform/
+
+# Local sensitive vars
+terraform.tfvars

@@ -5,33 +5,11 @@
 
 ```mermaid
 flowchart TB
-    %% Clients
-    U[Users (Web / Mobile)] -->|HTTPS| ALB[Application Load Balancer (Public Subnets)]
-
-    %% VPC
-    subgraph VPC[AWS VPC]
-        direction TB
-
-        %% Public Subnets
-        subgraph PUB[Public Subnets]
-            ALB
-        end
-
-        %% Private Subnets
-        subgraph PRIV[Private Subnets]
-            direction TB
-            ASG[Auto Scaling Group (EC2 Instances)]
-            ASG --> EC2a[EC2 Instance]
-            ASG --> EC2b[EC2 Instance]
-        end
-
-        %% Data Layer
-        RDS[(Amazon RDS PostgreSQL Multi-AZ)]
-    end
-
-    %% Connections
-    ALB -->|HTTP| ASG
-    ASG -->|Reads/Writes| RDS
+    U[Users] --> ALB[Application Load Balancer]
+    ALB --> ASG[Auto Scaling Group]
+    ASG --> EC2a[EC2 Instance]
+    ASG --> EC2b[EC2 Instance]
+    ASG --> RDS[Amazon RDS PostgreSQL]
 ```
 
 ## Core Components

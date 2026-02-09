@@ -37,7 +37,7 @@ flowchart TB
     %% Connections
     ALB -->|HTTP| ASG
     ASG -->|Reads/Writes| RDS
-
+```
 
 ## Core Components
 

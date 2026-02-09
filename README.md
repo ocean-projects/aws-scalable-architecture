@@ -6,7 +6,7 @@
 ```mermaid
 flowchart TB
     %% Clients
-    U[Users\n(Web / Mobile)] -->|HTTPS| ALB[Application Load Balancer\n(Public Subnets)]
+    U[Users (Web / Mobile)] -->|HTTPS| ALB[Application Load Balancer (Public Subnets)]
 
     %% VPC
     subgraph VPC[AWS VPC]
@@ -20,14 +20,13 @@ flowchart TB
         %% Private Subnets
         subgraph PRIV[Private Subnets]
             direction TB
-
-            ASG[Auto Scaling Group\n(EC2 Instances)]
+            ASG[Auto Scaling Group (EC2 Instances)]
             ASG --> EC2a[EC2 Instance]
             ASG --> EC2b[EC2 Instance]
         end
 
         %% Data Layer
-        RDS[(Amazon RDS\nPostgreSQL\nMulti-AZ)]
+        RDS[(Amazon RDS PostgreSQL Multi-AZ)]
     end
 
     %% Connections

@@ -1,10 +1,6 @@
 # AWS Scalable Architecture (ALB + Auto Scaling + RDS)
 
 
-## Architecture Diagram
-
-
-```md
 ## AWS Architecture Diagram
 
 ```mermaid

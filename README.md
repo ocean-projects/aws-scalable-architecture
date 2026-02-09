@@ -5,11 +5,16 @@
 
 ```mermaid
 flowchart TB
-    U[Users] --> ALB[Application Load Balancer]
-    ALB --> ASG[Auto Scaling Group]
-    ASG --> EC2a[EC2 Instance]
-    ASG --> EC2b[EC2 Instance]
-    ASG --> RDS[Amazon RDS PostgreSQL]
+    Users --> ALB[Application Load Balancer]
+
+    subgraph VPC[AWS VPC]
+        ALB --> ASG[Auto Scaling Group]
+
+        ASG --> EC2a[EC2 Instance]
+        ASG --> EC2b[EC2 Instance]
+
+        ASG --> RDS[Amazon RDS PostgreSQL]
+    end
 ```
 
 ## Core Components

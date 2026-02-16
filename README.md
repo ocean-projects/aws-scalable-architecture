@@ -57,6 +57,37 @@ flowchart TB
 - Read replicas supported for read-heavy workloads
 - Database is not publicly accessible
 
+## Screenshots
+
+### VPC Architecture (Region 1)
+Demonstrates public and private subnet segmentation within the VPC.
+
+![VPC Architecture](images/VPC-region-1.png)
+
+
+### Application Load Balancer (Region 1)
+Public-facing ALB distributing traffic across targets.
+
+![ALB](images/ALB-region-1.png)
+
+
+### Target Group Health Checks
+ALB routing traffic only to healthy EC2 instances.
+
+![Target Groups Health](images/EC2-Target-groups-with-health-region-1.png)
+
+
+### Auto Scaling Group Configuration
+ASG capacity configuration and scaling boundaries.
+
+![Auto Scaling Group](images/ASG-Instance-with-scaling-limits.png)
+
+
+### RDS with Replication
+Database replication and high availability configuration.
+
+![RDS Replication](images/RDS-with-replication-region-2.png)
+
 
 ## Infrastructure as Code
 

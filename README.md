@@ -105,6 +105,16 @@ This enables:
 - Clear change history
 - Safe iteration on architecture decisions
 
+## Terraform Layout
+
+```text
+.
+└── aws-scalable-architecture/
+    ├── images
+    ├── main.tf
+    ├── variables.tf
+    ├── outputs.tf
+    └── (optional) modules/
 
 ## Scaling Strategy
 

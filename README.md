@@ -57,7 +57,7 @@ flowchart TB
 - Read replicas supported for read-heavy workloads
 - Database is not publicly accessible
 
-## Screenshots
+## AWS Console Screenshots
 
 ### VPC Architecture (Region 1)
 Demonstrates public and private subnet segmentation within the VPC.
@@ -88,6 +88,8 @@ Database replication and high availability configuration.
 
 ![RDS Replication](images/RDS-with-replication-region-2.png)
 
+* Additional screenshots in images folder
+
 
 ## Infrastructure as Code
 
@@ -108,13 +110,13 @@ This enables:
 ## Terraform Layout
 
 ```text
-.
 └── aws-scalable-architecture/
     ├── images
     ├── main.tf
     ├── variables.tf
     ├── outputs.tf
     └── (optional) modules/
+```
 
 ## Scaling Strategy
 
@@ -182,19 +184,7 @@ This project prioritizes:
 
 It does **not** attempt to build a full application or UI.
 
-
-## AWS Console Screenshots
-
-The `images/` directory contains screenshots from the AWS Console showing the infrastructure after successful deployment, including:
-
-- VPCs and subnet configuration
-- Application Load Balancer and target groups
-- EC2 instances managed by Auto Scaling Groups
-- Scaling limits and health checks
-- RDS primary instance and read replicas
-
-These screenshots are included to provide visual confirmation of the deployed architecture.
-
+## How to deploy
 
 ## Summary
 

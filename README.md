@@ -118,6 +118,97 @@ This enables:
     └── (optional) modules/
 ```
 
+## Deployment and Testing
+
+### Requirements
+
+Before deploying, ensure you have:
+
+- AWS account with programmatic access
+- AWS CLI installed and configured (`aws configure`)
+- Terraform >= 1.5 installed
+- IAM user/role with permissions for:
+  - VPC
+  - EC2
+  - Auto Scaling
+  - ALB
+  - RDS
+  - IAM (if applicable)
+
+Verify installations:
+
+```bash
+aws --version
+terraform -version
+```
+
+### Deploy
+
+Clone the repository and navigate to the Terraform directory:
+
+```bash
+git clone https://github.com/<your-username>/aws-scalable-architecture.git
+cd aws-scalable-architecture/terraform
+```
+
+Initialize terraform
+
+```bash
+terraform init
+```
+
+Review the execution plan:
+
+```bash
+terraform plan
+```
+
+Apply the infrastructure:
+
+```bash
+terraform apply
+```
+
+Confirm with yes when prompted.
+
+After successful deployment, Terraform will output relevant resource information.
+
+### Test
+
+Retrieve the ALB DNS name from Terraform output:
+
+```bash
+terraform output
+```
+
+Test the application endpoint:
+
+```bash
+curl http://<alb-dns-name>
+```
+
+You should receive a valid HTTP response from one of the EC2 instances behind the load balancer.
+
+To verify scaling:
+	1.	Trigger load (optional: use a load testing tool).
+	2.	Monitor the Auto Scaling Group in the AWS Console.
+	3.	Observe new EC2 instances launching when scaling thresholds are met.
+
+## Destroy
+
+To tear down all provisioned infrastructure:
+
+```bash
+terraform destroy
+```
+
+Confirm with yes when prompted.
+
+This will remove all AWS resources created by this Terraform configuration.
+
+Always destroy unused infrastructure to avoid unnecessary AWS charges.
+
+
 ## Scaling Strategy
 
 ### Application Layer

@@ -1,5 +1,10 @@
 # AWS Scalable Architecture (ALB + Auto Scaling + RDS)
 
+**ALB + Auto Scaling Group + Private Subnets + RDS (Multi-AZ)**
+
+This repository contains a **production-style AWS reference architecture** provisioned with **Terraform**, designed for **scalability**, **high availability**, and **security-first networking**.
+
+The goal is to demonstrate how to design and provision the infrastructure that supports a real backend system — not to showcase application features.
 
 ## AWS Architecture Diagram
 

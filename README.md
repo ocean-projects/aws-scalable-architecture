@@ -154,7 +154,7 @@ Clone the repository and navigate to the Terraform directory:
 
 ```bash
 git clone https://github.com/oceean-projects/aws-scalable-architecture.git
-cd aws-scalable-architecture/terraform
+cd aws-scalable-architecture
 ```
 
 Initialize terraform
@@ -177,7 +177,7 @@ terraform apply
 
 Confirm with yes when prompted.
 
-After successful deployment, Terraform will output relevant resource information.
+After successful deployment, Terraform will output relevant resource information (e.g., ALB DNS name).
 
 ### Test
 

@@ -1,5 +1,6 @@
-# AWS Scalable Architecture 
+# AWS Scalable Architecture
 
+![Terraform CI](https://github.com/ocean-projects/aws-scalable-architecture/actions/workflows/terraform-ci.yml/badge.svg)
 
 **ALB + Auto Scaling Group + Private Subnets + RDS (Multi-AZ)**
 
